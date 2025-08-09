@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>रक्षाबंधन की शुभकामनाएँ</title>
+    
+    <style>
+        /* Google Font का आयात */
+        @import url('https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Tiro Devanagari Hindi', serif;
+            background-image: url('bandhan.jpg'); 
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 10px 20px 40px 20px; 
+            box-sizing: border-box;
+            min-height: 100vh;
+        }
+
+        /* फूल और गुब्बारे के एनिमेशन के लिए कैनवास */
+        #animation-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            z-index: 1;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* संगीत नियंत्रण के लिए स्टाइल */
+        #music-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+        #music-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 2px solid #FFD700;
+            color: #fff;
+            font-size: 1.2em;
+            padding: 2px 10px;
+            border-radius: 50px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        #music-btn:hover {
+            transform: scale(1.1);
+        }
+        #music-btn svg {
+            transition: transform 0.3s ease;
+            width: 24px;
+            height: 24px;
+        }
+        #music-btn.playing svg {
+            animation: none;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            margin: 0 0 5px 0;
+            font-weight: 1000;
+            color: #fed690;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        video {
+            max-width: 90%;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 5px solid red;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .tagline {
+            font-size: 1.7em;
+            font-weight: 800;
+            color: #f6cc3e;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .main-wish {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+
+        .form-container p {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        #nameInput {
+            width: 80%;
+            padding: 12px;
+            border: 2px solid #138808;
+            border-radius: 30px;
+            font-size: 1em;
+            font-family: 'Tiro Devanagari Hindi', serif;
+            text-align: center;
+            margin-bottom: 15px;
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #333;
+        }
+        #nameInput::placeholder {
+            color: #888;
+        }
+
+        #generateBtn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(45deg, #FF9933, #E87A14);
+            color: #ffffff;
+            font-size: 1.1em;
+            font-weight: 700;
+            font-family: 'Tiro Devanagari Hindi', serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        #generateBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        #link-display {
+            margin-top: 20px;
+            display: none;
+            background-color: transparent;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        #generatedLink {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+            text-align: center;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            -webkit-user-select: all;
+            -moz-user-select: all;
+            -ms-user-select: all;
+            user-select: all;
+        }
+
+        .whatsapp-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background-color: #138808;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .whatsapp-button:hover {
+            background-color: #106c07;
+            transform: translateY(-2px);
+        }
+        .whatsapp-button svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+            margin-right: 8px;
+        }
+        
+        /* ### विज्ञापन बैनर के लिए CSS ### */
+        .ad-banner-bottom {
+            margin-top: 25px; /* बटन और विज्ञापन के बीच जगह */
+            text-align: center;
+            
+        }
+
+    </style>
+</head>
+<body>
+    
+    <canvas id="animation-canvas"></canvas>
+    
+    <audio id="background-music" src="song.mp3" loop playsinline></audio>
+
+    <div id="music-controls">
+        <button id="music-btn" aria-label="Play/Pause Music">
+            <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor" style="display: block;">
+                <path d="M8 5v14l11-7z"/>
+            </svg>
+            <svg id="pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+        </button>
+    </div>
+
+    <div class="container">
+        <h1 id="main-heading">हैप्पी रक्षाबंधन</h1>
+        
+        <video src="rakhi.mp4" autoplay loop muted playsinline alt="रक्षाबंधन वीडियो"></video>
+
+        <p class="tagline">बहन-भाई का अनमोल प्रेम</p>
+        <p class="main-wish">आपको और आपके परिवार को रक्षाबंधन की हार्दिक शुभकामनाएँ।</p>
+        
+        <div class="form-container">
+            <p>अपना शुभ नाम:</p>
+            <input type="text" id="nameInput" placeholder="अपना नाम यहाँ लिखें">
+            <br>
+            <button id="generateBtn">शुभकामना भेजें</button>
+
+            <!-- ### बदला हुआ हिस्सा: Adsterra विज्ञापन कोड अब 'शुभकामना भेजें' बटन के नीचे है ### -->
+            <div class="ad-banner-bottom">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : 'f82fb3767c0814eeaa8795b5786f81ad',
+                        'format' : 'iframe',
+                        'height' : 50,
+                        'width' : 320,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="//www.highperformanceformat.com/f82fb3767c0814eeaa8795b5786f81ad/invoke.js"></script>
+            </div>
+        </div>
+        
+        <div id="link-display">
+            <p>सीधे WhatsApp पर भेजें या लिंक कॉपी करें:</p>
+            <input type="text" id="generatedLink" readonly onclick="this.select(); document.execCommand('copy'); alert('लिंक कॉपी हो गया!');">
+            <br>
+            <a id="whatsappShareBtn" href="#" target="_blank" class="whatsapp-button">
+                <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.31 20.62C8.75 21.41 10.36 21.85 12.04 21.85C17.5 21.85 21.95 17.4 21.95 11.94C21.95 6.48 17.5 2 12.04 2M12.04 3.67C16.56 3.67 20.28 7.39 20.28 11.93C20.28 16.47 16.56 20.18 12.04 20.18C10.56 20.18 9.14 19.78 7.9 19.05L7.53 18.83L4.32 19.75L5.26 16.63L5.03 16.26C4.24 15 3.8 13.47 3.8 11.92C3.8 7.38 7.52 3.67 12.04 3.67M9.17 7.45C8.92 7.45 8.68 7.5 8.47 7.94C8.26 8.38 7.61 9.03 7.61 10.24C7.61 11.45 8.5 12.61 8.66 12.79C8.82 12.97 10.27 15.25 12.51 16.14C14.38 16.87 14.75 16.72 15.11 16.68C15.63 16.6 16.65 16.03 16.86 15.43C17.07 14.83 17.07 14.33 16.99 14.23C16.91 14.13 16.75 14.07 16.5 13.92C16.25 13.77 15.09 13.21 14.88 13.13C14.67 13.05 14.52 13.01 14.36 13.26C14.2 13.51 13.76 14.03 13.62 14.18C13.48 14.34 13.34 14.36 13.09 14.21C12.84 14.06 12.02 13.79 11.04 12.9C10.23 12.16 9.68 11.25 9.53 11C9.38 10.75 9.54 10.61 9.66 10.5C9.77 10.38 9.91 10.2 10.03 10.06C10.15 9.92 10.2 9.82 10.3 9.67C10.4 9.52 10.34 9.38 10.28 9.28C10.22 9.18 9.77 8.03 9.58 7.6C9.39 7.17 9.2 7.21 9.17 7.21Z"></path></svg>
+                <span>WhatsApp पर शेयर करें</span>
+            </a>
+            <!-- विज्ञापन कोड को ऊपर ले जाया गया है, इसलिए यह अब यहाँ नहीं है -->
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const canvas = document.getElementById('animation-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            let flowers = [];
+            let balloons = []; 
+
+            const flowerEmojis = ['🌸', '🌼', '🌺', '🌷', '🌻'];
+            const balloonColors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6', '#e67e22', '#1abc9c'];
+
+            function drawBalloon(ctx, balloon) {
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.lineWidth = 2;
+                ctx.moveTo(balloon.x, balloon.y);
+                ctx.lineTo(balloon.x, balloon.y + balloon.size * 1.5);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.fillStyle = balloon.color;
+                ctx.ellipse(balloon.x, balloon.y - (balloon.size / 2), balloon.size / 2.5, balloon.size / 2, 0, 0, 2 * Math.PI);
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.fillStyle = balloon.color;
+                ctx.moveTo(balloon.x, balloon.y);
+                ctx.lineTo(balloon.x - 5, balloon.y + 5);
+                ctx.lineTo(balloon.x + 5, balloon.y + 5);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            function createInitialElements() {
+                flowers = [];
+                balloons = [];
+                for (let i = 0; i < 20; i++) {
+                    flowers.push({ 
+                        x: Math.random() * canvas.width, 
+                        y: Math.random() * canvas.height, 
+                        size: Math.random() * 20 + 20, 
+                        speed: Math.random() * 2 + 1, 
+                        emoji: flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)] 
+                    });
+                }
+                for (let i = 0; i < 5; i++) {
+                    balloons.push({
+                        x: Math.random() * canvas.width,
+                        y: canvas.height + Math.random() * 100,
+                        size: Math.random() * 20 + 30,
+                        speed: -(Math.random() * 1.5 + 0.5),
+                        color: balloonColors[Math.floor(Math.random() * balloonColors.length)]
+                    });
+                }
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                flowers.forEach(flower => {
+                    flower.y += flower.speed;
+                    if (flower.y > canvas.height + flower.size) { 
+                        flower.y = -flower.size; 
+                        flower.x = Math.random() * canvas.width; 
+                    }
+                    ctx.font = `${flower.size}px serif`;
+                    ctx.fillText(flower.emoji, flower.x, flower.y);
+                });
+
+                balloons.forEach(balloon => {
+                    balloon.y += balloon.speed;
+                    if (balloon.y < -balloon.size * 2) {
+                        balloon.y = canvas.height + balloon.size;
+                        balloon.x = Math.random() * canvas.width;
+                    }
+                    drawBalloon(ctx, balloon);
+                });
+            }
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                createInitialElements();
+            });
+            
+            createInitialElements();
+            animate();
+
+            const music = document.getElementById('background-music');
+            const musicBtn = document.getElementById('music-btn');
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+
+            let isPlaying = false;
+
+            musicBtn.addEventListener('click', () => {
+                if (isPlaying) {
+                    music.pause();
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+                    isPlaying = false;
+                } else {
+                    let playPromise = music.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(_ => {
+                            playIcon.style.display = 'none';
+                            pauseIcon.style.display = 'block';
+                            isPlaying = true;
+                        }).catch(error => {
+                            console.log("Music auto-play was prevented. User must interact with the page first.");
+                            isPlaying = false;
+                        });
+                    }
+                }
+            });
+
+            const mainHeading = document.getElementById('main-heading');
+            const nameInput = document.getElementById('nameInput');
+            const generateBtn = document.getElementById('generateBtn');
+            const linkDisplay = document.getElementById('link-display');
+            const generatedLinkInput = document.getElementById('generatedLink');
+            const whatsappShareBtn = document.getElementById('whatsappShareBtn');
+            const formContainer = document.querySelector('.form-container');
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const senderName = urlParams.get('from');
+
+            if (senderName) {
+                try {
+                    const decodedName = decodeURIComponent(senderName.replace(/\+/g, ' '));
+                    senderInfo.innerHTML = `<span style="font-size: 0.8em;"></span><br><strong style="color: #FFD700;">${decodedName}</strong><br><span style="font-size: 0.8em;">की और से!</span>`;
+                    formContainer.querySelector('p').textContent = "आप भी अपनी शुभकामना भेजें:";
+                } catch(e) {
+                    console.error("Error decoding name from URL:", e);
+                    mainHeading.textContent = 'हैप्पी रक्षाबंधन';
+                }
+            }
+
+            function showShareOptions(name, link) {
+                const whatsappMessage = `*${name}* ने आपको रक्षाबंधन की विशेष शुभकामनाएँ भेजी हैं!\n\n🪔✨ देखने के लिए इस नीले लिंक पर क्लिक करें 👇\n${link}`;
+                const whatsappURL = `https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`;
+                
+                whatsappShareBtn.href = whatsappURL;
+                generatedLinkInput.value = link;
+                linkDisplay.style.display = 'block';
+                formContainer.style.display = 'none';
+            }
+
+            generateBtn.addEventListener('click', async function() {
+                const yourName = nameInput.value.trim();
+                if (yourName === '') {
+                    alert('कृपया अपना नाम दर्ज करें!');
+                    return;
+                }
+
+                const baseURL = window.location.origin + window.location.pathname;
+                const newLink = `${baseURL}?from=${encodeURIComponent(yourName)}`;
+                showShareOptions(yourName, newLink);
+            });
+        });
+    </script>
+
+</body>
+</html>
